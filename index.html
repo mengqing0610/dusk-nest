@@ -695,8 +695,10 @@ function gbRender(list){
       '<div class="txt">'+gbEsc(m.text)+'</div></div>';
   }).join("");
 }
+/* 留言接口：沿用原千问办公后端，提交后自动转发到站长网易邮箱 */
+var GB_API="https://9c76zv6b.qwenwork.host/api/messages";
 function gbLoad(){
-  fetch("/api/messages").then(function(r){return r.json();}).then(function(d){gbRender(d.messages||[]);})
+  fetch(GB_API).then(function(r){return r.json();}).then(function(d){gbRender(d.messages||[]);})
     .catch(function(){document.getElementById("gbMsg").className="gb-msg err";document.getElementById("gbMsg").textContent="留言加载失败，刷新页面试试。";});
 }
 document.getElementById("gbForm").addEventListener("submit",function(ev){
@@ -706,7 +708,7 @@ document.getElementById("gbForm").addEventListener("submit",function(ev){
   var msg=document.getElementById("gbMsg"), btn=document.getElementById("gbSubmit");
   if(!nick||!text){msg.className="gb-msg err";msg.textContent="昵称和留言内容都要填哦。";return;}
   btn.disabled=true;msg.className="gb-msg";msg.textContent="正在寄出…";
-  fetch("/api/messages",{method:"POST",headers:{"Content-Type":"application/json"},
+  fetch(GB_API,{method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({nick:nick,text:text})})
     .then(function(r){return r.json().then(function(d){return {ok:r.ok,d:d};});})
     .then(function(res){
